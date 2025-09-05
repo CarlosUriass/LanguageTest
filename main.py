@@ -23,8 +23,12 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
 
 # --- Inicialización de Container ---
 container = Container()
-container.wire(modules=["app.application.questions.routes.question_routes"])
-
+container.wire(
+    modules=[
+        "app.application.questions.routes.question_routes",
+        "app.application.evaluation.routes.evaluation_routes"
+    ]
+)
 # --- Incluir rutas ---
 app.include_router(question_router, prefix="/questions")
 app.include_router(evaluation_router, prefix="/evaluation")
