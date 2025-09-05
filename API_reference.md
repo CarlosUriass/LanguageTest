@@ -13,9 +13,7 @@ http://localhost:8000
 ### Description
 
 Receives the learner’s answers to an initial set of **diagnostic questions**.
-The system processes responses with an **LLM-based agent**, applies **prompt-engineering + memory**, and returns the **next set of questions** (if any).
-
-This endpoint is typically called at the **start of the assessment session**.
+The system processes responses with an **LLM-based agent**, applies **prompt-engineering + memory**, and returns the **next set of questions** (always 5 strings).
 
 ---
 
@@ -32,48 +30,16 @@ This endpoint is typically called at the **start of the assessment session**.
     {
       "question_id": 2,
       "answer": "my best friend is a funny guy he is so cool"
-    },
-    {
-      "question_id": 3,
-      "answer": "when i was in the university i was working and taking classes at the same time so that was difficult but i affront the challenge"
-    },
-    {
-      "question_id": 4,
-      "answer": "the advantages of the social media is a comunication media and we see the life of others people, the disavantages of the social media is that sometimes we spend too much time in ther"
-    },
-    {
-      "question_id": 5,
-      "answer": "i want to travel to spain because my dream is go to a soccer match of my favorite club the FCB"
-    },
-    {
-      "question_id": 6,
-      "answer": "the implemetation of the IA make the university most easy and it is a way to learn easy"
-    },
-    {
-      "question_id": 7,
-      "answer": "the enterprises search for minor costs and that is what IA offer in comparition with human work"
-    },
-    {
-      "question_id": 8,
-      "answer": "i think the quote says the art is important is way of the reality"
-    },
-    {
-      "question_id": 9,
-      "answer": "it will change definitly the oportunities in mexico are different than others countrys"
-    },
-    {
-      "question_id": 10,
-      "answer": "yesterday i watch a movie which spoke about the resilency and the movie talks about a prisioner who was guilty but he was innocent and that get me thinking"
     }
   ]
 }
 ```
 
 - `user_id` (string, UUID): Unique identifier of the learner.
-- `answers` (array): List of answers given by the user.
+- `answers` (array): Answers to the **initial fixed questions**.
 
   - `question_id` (int): Identifier of the question.
-  - `answer` (string): Free-text response.
+  - `answer` (string): Free-text learner response.
 
 ---
 
@@ -81,11 +47,17 @@ This endpoint is typically called at the **start of the assessment session**.
 
 ```json
 {
-  "next_questions": []
+  "next_questions": [
+    "What is your favorite hobby and why do you enjoy it?",
+    "Describe a memorable trip you took. What did you do?",
+    "What are some qualities you look for in a friend?",
+    "How do you think education can be improved in your country?",
+    "What are the most important skills for success in your field?"
+  ]
 }
 ```
 
-- `next_questions` (array): Contains dynamically generated follow-up questions (empty if the system moves to final evaluation).
+- `next_questions` (array of strings): Always **5 dynamically generated questions**.
 
 ---
 
@@ -93,8 +65,8 @@ This endpoint is typically called at the **start of the assessment session**.
 
 ### Description
 
-Finalizes the evaluation process and returns the **estimated English proficiency level** according to **CEFR (A1–C2)**.
-This endpoint is typically called after completing the initial assessment and any adaptive questioning.
+Finalizes the evaluation after the learner has answered both the **initial set** and the **next 5 adaptive questions**.
+Returns the **estimated CEFR proficiency level (A1–C2)** and optional scores.
 
 ---
 
@@ -102,16 +74,30 @@ This endpoint is typically called after completing the initial assessment and an
 
 ```json
 {
-  "user_id": "123e4567-e89b-12d3-a456-426614174000"
+  "user_id": "123e4567-e89b-12d3-a456-426614174000",
+  "answers": [
+    {
+      "question": "What is your favorite hobby and why do you enjoy it?",
+      "answer": "my favorite hooby is play basketball and i enjoy it because im good on that"
+    },
+    {
+      "question": "Describe a memorable trip you took. What did you do?",
+      "answer": "i went to Guadalajara and i went to de Zoo that was nice"
+    }
+  ]
 }
 ```
+
+- `user_id` (string, UUID): Learner identifier (same session as `/initial`).
+- `answers` (array): Answers to the **5 adaptive questions**.
+
+  - `question` (string): The exact question text.
+  - `answer` (string): Free-text learner response.
 
 ---
 
 ### Response Example
 
 ```json
-"b2" // !TODO: improve the API response
+  a2 // TODO: IMPROVE API RESPONSE
 ```
-
----
